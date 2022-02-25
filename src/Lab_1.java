@@ -1,32 +1,55 @@
-import java.util.AbstractSequentialList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Lab_1 {
+    private static final Memory rom = new Memory();
+
     public static void main(String[] args) {
         LinkedList<MemoryData> filled = new LinkedList<>();
         LinkedList<MemoryData> nonFilled = new LinkedList<>();
 
-        var fff = new MemoryData(10, 40);
+        var fff = new MemoryData(10, 401);
 
-        filled.add(new MemoryData(60, 150));
-        filled.add(new MemoryData(50, 150));
+        MemoryData[] array = {
+                new MemoryData(10, 160),
+                new MemoryData(20, 170),
+                new MemoryData(30, 180),
+                new MemoryData(40, 190),
+                new MemoryData(50, 200)
+        };
+
+        filled.add(new MemoryData(60, 190));
+        filled.add(new MemoryData(50, 155));
         filled.add(fff);
         filled.add(new MemoryData(400, 400));
-        filled.add(new MemoryData(70, 150));
-        filled.add(new MemoryData(80, 150));
+        filled.add(new MemoryData(70, 120));
+        filled.add(new MemoryData(80, 160));
 
-        System.out.println(Arrays.toString(filled.toArray()));
-        filled.remove(0);
-        System.out.println(Arrays.toString(filled.toArray()));
-        filled.remove(filled.getFirst());
-        System.out.println(Arrays.toString(filled.toArray()));
-        filled.remove(fff);
-        System.out.println(Arrays.toString(filled.toArray()));
+//        filled.print();
 
 
+//        var test = new Memory();
 
+//        test.memInfo();
+//        test.allocate(150);
+//        test.memInfo();
+
+
+//        filled.clear();
+//        filled.print();
+//        filled.addAll(List.of(array));
+//        filled.print();
+//        filled.sort();
+//        filled.remove(0);
+//        filled.print();
+//        filled.remove(fff);
+//        filled.print();
+
+//        System.out.println(filled.getOne(2));
+
+
+//        for (var el : filled) {
+//            System.out.println(el.getClass());
+//        }
 
 
 //        nonFilled.add(new MemoryData(4001, 9400));
@@ -50,11 +73,44 @@ public class Lab_1 {
 
 //        filled.remove(1);
 //        filled.print();
+
+
+        userInterface();
+
     }
 
-    private static <T> void print(LinkedList<T> list){
-        for (var el : list) {
-            System.out.println(el);
+    public static void userInterface() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("//////////////////////////////////////");
+            System.out.println("1. View info about memory");
+            System.out.println("2. Allocate some space");
+            System.out.println("3. Free up space");
+            System.out.println("4. Exit");
+            System.out.print("Choose the command: ");
+            String command = scanner.next();
+            switch (command) {
+                case "1":
+                    rom.memInfo();
+                    break;
+                case "2":
+                    System.out.println("------------------------");
+                    System.out.print("Enter size of space, what you want to allocate: ");
+                    rom.allocate(scanner.nextInt());
+                    System.out.println("------------------------");
+                    break;
+                case "3":
+                    System.out.println("------------------------");
+                    System.out.print("Enter size of space, what you want to free up: ");
+                    rom.freeUp(scanner.nextInt());
+                    System.out.println("------------------------");
+                    break;
+                case "4":
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Wrong command, please try again");
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
-import java.util.AbstractSequentialList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.*;
 
 public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<T> {
     private Node<T> head;
@@ -9,6 +6,9 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
     private int size;
 
     public LinkedList() {
+        this.head = null;
+        this.current = null;
+        this.size = 0;
     }
 
     public LinkedList(Node<T> node) {
@@ -28,16 +28,16 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
         }
     }
 
-    public Node<T> getOne(int number) {
+    public T getOne(int number) {
         if (number >= size) return null;
         current = head;
         for (int i = 0; i < number; i++) {
             current = current.next;
         }
-        return current;
+        return current.data;
     }
 
-    private void sort() {
+    public void sort() {
         if (head.next != null) {
             Node<T> last = null;
             Node<T> current = this.head;
@@ -67,10 +67,7 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
             }
             while (current.next != null);
         }
-    }
-
-    public void swap(int node1, int node2) {
-
+        current = null;
     }
 
     public void print() {
@@ -81,11 +78,12 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
     public String toString() {
         StringBuilder output = new StringBuilder();
         current = head;
+        output.append("null");
         while (current != null) {
-            output.append(current.data.toString()).append(" -> ");
+            output.append(" <- ").append(current.data.toString());
             current = current.next;
         }
-        return output.append("null\n\r").toString();
+        return output.append("\n\r").toString();
     }
 
     @Override
@@ -108,18 +106,20 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
         return false;
     }
 
-    //todo her znaet chto eto
     @Override
     public Iterator<T> iterator() {
+        current = head;
         return new Iterator<T>() {
             @Override
             public boolean hasNext() {
-                return current.next != null;
+                return current != null;
             }
 
             @Override
             public T next() {
-                return current.data;
+                var el = current.data;
+                current = current.next;
+                return el;
             }
         };
     }
@@ -130,45 +130,56 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
         Object[] result = new Object[this.size()];
         int i = 0;
         while (current != null) {
-            result[i] = current.data;
-            i++;
+            result[i++] = current.data;
             current = current.next;
         }
         return result;
     }
 
-    //todo don't understand
-
-    @Override
-    public <T1> T1[] toArray(T1[] t1s) {
-        return null;
-    }
-
     @Override
     public boolean add(T t) {
         Node<T> node = new Node<>(t);
+        if (isEmpty()) {
+            head = node;
+            this.size++;
+            this.sort();
+            return true;
+        }
+
         current = head;
         while (current.next != null) {
             current = current.next;
         }
         current.next = node;
+        this.size++;
+        this.sort();
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        T del = (T)o;
-
+        if(isEmpty() || !contains(o)) return false;
+        var current = head;
+        int i = 0;
+        while (current != null) {
+            if (current.data.equals(o)) {
+                remove(i);
+                return true;
+            }
+            i++;
+            current = current.next;
+        }
         return false;
     }
 
     @Override
     public T remove(int index) {
-        if (head == null || index >= size) throw new NullPointerException("No elements in list");              //exit 1
+        if (isEmpty() || index >= size()) throw new NullPointerException("No elements in list");              //exit 1
         Node<T> deleted;
         if (index == 0) {
             deleted = new Node<>(head);
             head = head.next;
+            --size;
             return deleted.data;
         }
 
@@ -180,29 +191,9 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
         }
         deleted = current;
         old.next = current.next;
-        size--;
+        --size;
         this.sort();
         return deleted.data;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends T> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> collection) {
-        return false;
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> collection) {
-        return false;
     }
 
     @Override
@@ -211,7 +202,78 @@ public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<
     }
 
     @Override
-    public ListIterator<T> listIterator(int i) {
-        return null;
+    public boolean addAll(Collection<? extends T> collection) {
+        if(collection.isEmpty()) return false;
+        for (var el : collection) {
+            add(el);
+        }
+        return true;
     }
+
+    @Override
+    public <T1> T1[] toArray(T1[] t1s) {
+        throw new NullPointerException("Not configured method");
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        throw new NullPointerException("Not configured method");
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> collection) {
+        throw new NullPointerException("Not configured method");
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+        throw new NullPointerException("Not configured method");
+    }
+
+    @Override
+    public ListIterator<T> listIterator(int i) {
+        throw new NullPointerException("Not configured method");
+    }
+
+    private static class Node<T> {
+        private T data;
+        private Node<T> next;
+
+        public Node() {
+            this.data = null;
+            this.next = null;
+        }
+
+        public Node(T data) {
+            this.data = data;
+            this.next = null;
+        }
+
+        public Node(Node<T> node) {
+            this.data = node.data;
+            this.next = node.next;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
+        }
+
+        public Node<T> getNext() {
+            return next;
+        }
+
+        public void setNext(Node<T> next) {
+            this.next = next;
+        }
+
+        @Override
+        public String toString() {
+            return data.toString();
+        }
+    }
+
 }

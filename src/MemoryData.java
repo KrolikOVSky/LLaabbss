@@ -32,8 +32,9 @@ public class MemoryData implements Comparable<MemoryData> {
     @SuppressWarnings("UseCompareMethod")       //todo delete ignoring
     @Override
     public int compareTo(final MemoryData memoryData) {
-        if (this.address < memoryData.getAddress()) return -1;
-        if (this.address > memoryData.getAddress()) return 1;
+        if (this.data < memoryData.getData()) return -1;
+        if (this.data > memoryData.getData()) return 1;
         return 0;
     }
+
 }
