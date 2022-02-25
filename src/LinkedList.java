@@ -1,7 +1,9 @@
+import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ListIterator;
 
-public class LinkedList<T extends Comparable<T>> implements Collection<T>{
+public class LinkedList<T extends Comparable<T>> extends AbstractSequentialList<T> {
     private Node<T> head;
     private Node<T> current;
     private int size;
@@ -24,26 +26,6 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
             this.add(current.data);
             current = current.next;
         }
-    }
-
-    public Node<T> remove(int number) {
-        if (head == null || number >= size) return null;              //exit 1
-//        if (number >= size) return null;    //exit 2
-        if (number == 0) {
-            Node<T> deleted = new Node<>(head);
-            head = head.next;
-            return deleted;
-        }
-        Node<T> old = head;
-        current = head.next;
-        for (int i = 1; i < number; i++) {
-            old = current;
-            current = current.next;
-        }
-        old.next = current.next;
-        size--;
-        this.sort();
-        return current;                             //exit 3
     }
 
     public Node<T> getOne(int number) {
@@ -87,7 +69,7 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
         }
     }
 
-    public void swap(int node1, int node2){
+    public void swap(int node1, int node2) {
 
     }
 
@@ -115,17 +97,18 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
     public boolean isEmpty() {
         return head == null;
     }
-    
+
     @Override
     public boolean contains(Object o) {
         current = head;
-        while(current.next != null){
-            if(current.data == o) return true;
+        while (current != null) {
+            if (current.data == o) return true;
             current = current.next;
         }
         return false;
     }
 
+    //todo her znaet chto eto
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -146,7 +129,7 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
         current = head;
         Object[] result = new Object[this.size()];
         int i = 0;
-        while (current.next != null){
+        while (current != null) {
             result[i] = current.data;
             i++;
             current = current.next;
@@ -155,6 +138,7 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
     }
 
     //todo don't understand
+
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
         return null;
@@ -162,12 +146,43 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
 
     @Override
     public boolean add(T t) {
-        return false;
+        Node<T> node = new Node<>(t);
+        current = head;
+        while (current.next != null) {
+            current = current.next;
+        }
+        current.next = node;
+        return true;
     }
 
     @Override
     public boolean remove(Object o) {
+        T del = (T)o;
+
         return false;
+    }
+
+    @Override
+    public T remove(int index) {
+        if (head == null || index >= size) throw new NullPointerException("No elements in list");              //exit 1
+        Node<T> deleted;
+        if (index == 0) {
+            deleted = new Node<>(head);
+            head = head.next;
+            return deleted.data;
+        }
+
+        Node<T> old = head;
+        current = head.next;
+        for (int i = 1; i < index; i++) {
+            old = current;
+            current = current.next;
+        }
+        deleted = current;
+        old.next = current.next;
+        size--;
+        this.sort();
+        return deleted.data;
     }
 
     @Override
@@ -192,6 +207,11 @@ public class LinkedList<T extends Comparable<T>> implements Collection<T>{
 
     @Override
     public void clear() {
+        this.head = null;
+    }
 
+    @Override
+    public ListIterator<T> listIterator(int i) {
+        return null;
     }
 }
